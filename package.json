@@ -1,8 +1,8 @@
 {
-  "name": "wxt-react-starter",
+  "name": "virtual-tryon",
   "description": "manifest.json description",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "wxt",

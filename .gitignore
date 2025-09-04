@@ -9,14 +9,13 @@ lerna-debug.log*
 
 node_modules
 .output
+dist
 stats.html
 stats-*.json
 .wxt
 web-ext.config.ts
 
 # Editor directories and files
-.vscode/*
-!.vscode/extensions.json
 .idea
 .DS_Store
 *.suo

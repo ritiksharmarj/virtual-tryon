@@ -9,6 +9,7 @@
     "ignoreUnknown": false,
     "includes": [
       "**",
+      "!**/dist",
       "!**/.output",
       "!**/.wxt",
       "!**/assets",
