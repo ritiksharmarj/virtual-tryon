@@ -12,13 +12,16 @@
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
-    "postinstall": "wxt prepare"
+    "postinstall": "wxt prepare",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write ."
   },
   "dependencies": {
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.2.2",
     "@types/chrome": "^0.1.4",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.3",
