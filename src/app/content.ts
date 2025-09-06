@@ -5,7 +5,9 @@ export default defineContentScript({
     browser.runtime.onMessage.addListener(async (message) => {
       if (message.type === "SHOW_UPLOAD_PROMPT") {
         showUploadPrompt(message.message);
-      } else if (message.type === "START_VIRTUAL_TRYON") {
+      }
+
+      if (message.type === "START_VIRTUAL_TRYON") {
         await startVirtualTryOn(message.imageUrl, message.userPhoto);
       }
     });
@@ -57,8 +59,10 @@ export default defineContentScript({
 
     // Function to start virtual try-on process
     async function startVirtualTryOn(imageUrl: string, userPhoto: string) {
-      const img = Array.from(document.querySelectorAll("img")).find(
-        (img) => img.src === imageUrl,
+      const productImageUrl = imageUrl.split("?")[0];
+
+      const img = Array.from(document.querySelectorAll("img")).find((img) =>
+        img.src.includes(productImageUrl),
       );
 
       if (!img) {
@@ -72,15 +76,17 @@ export default defineContentScript({
 
       try {
         // Convert image to base64 for processing
-        const productImageBase64 = await imageToBase64(imageUrl);
+        // const productImageBase64 = await imageToBase64(imageUrl);
 
         // Send to background script for AI processing
         const response = await browser.runtime.sendMessage({
           type: "GENERATE_TRYON_IMAGE",
           userPhoto,
-          productImage: productImageBase64,
+          productImage: productImageUrl,
           imageElement: img.outerHTML,
         });
+
+        console.log(response);
 
         if (response.success) {
           // Replace image with generated result
@@ -106,22 +112,22 @@ export default defineContentScript({
     }
 
     // Helper function to convert image URL to base64
-    async function imageToBase64(imageUrl: string): Promise<string> {
-      try {
-        const response = await fetch(imageUrl);
-        const blob = await response.blob();
+    // async function imageToBase64(imageUrl: string): Promise<string> {
+    //   try {
+    //     const response = await fetch(imageUrl);
+    //     const blob = await response.blob();
 
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-          reader.readAsDataURL(blob);
-        });
-      } catch (error) {
-        console.error("Failed to convert image to base64:", error);
-        throw error;
-      }
-    }
+    //     return new Promise((resolve, reject) => {
+    //       const reader = new FileReader();
+    //       reader.onload = () => resolve(reader.result as string);
+    //       reader.onerror = reject;
+    //       reader.readAsDataURL(blob);
+    //     });
+    //   } catch (error) {
+    //     console.error("Failed to convert image to base64:", error);
+    //     throw error;
+    //   }
+    // }
 
     // Create loading overlay
     function createLoadingOverlay(img: HTMLImageElement) {

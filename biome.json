@@ -48,6 +48,15 @@
       },
       "security": {
         "noDangerouslySetInnerHtml": "off"
+      },
+      "nursery": {
+        "useSortedClasses": {
+          "fix": "safe",
+          "level": "error",
+          "options": {
+            "functions": ["cva", "clsx", "cn"]
+          }
+        }
       }
     }
   },

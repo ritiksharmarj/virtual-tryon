@@ -43,6 +43,8 @@ export default defineBackground(() => {
           // Generate virtual try-on using Fal AI HTTP API
           const result = await generateVirtualTryOn(userPhoto, productImage);
 
+          console.log(result);
+
           console.log("Virtual try-on generation successful");
           sendResponse({
             success: true,
@@ -109,7 +111,7 @@ async function generateVirtualTryOn(
     console.log("Submitting request to Fal AI...");
     // Step 1: Submit request to Fal AI queue
     const submitResponse = await fetch(
-      "https://queue.fal.run/fal-ai/nano-banana",
+      "https://queue.fal.run/fal-ai/nano-banana/edit",
       {
         method: "POST",
         headers: {
@@ -126,6 +128,8 @@ async function generateVirtualTryOn(
       },
     );
 
+    console.log(submitResponse);
+
     if (!submitResponse.ok) {
       const errorText = await submitResponse.text();
       console.error("Submit request failed:", submitResponse.status, errorText);
@@ -137,6 +141,8 @@ async function generateVirtualTryOn(
     const submitResult: QueueSubmitResponse = await submitResponse.json();
     const { request_id } = submitResult;
     console.log("Request submitted successfully, request_id:", request_id);
+
+    console.log(submitResult);
 
     console.log("Polling for completion...");
     // Step 2: Poll status until completion
@@ -156,6 +162,8 @@ async function generateVirtualTryOn(
         },
       );
 
+      console.log(statusResponse);
+
       if (!statusResponse.ok) {
         const errorText = await statusResponse.text();
         console.error("Status check failed:", statusResponse.status, errorText);
@@ -167,6 +175,8 @@ async function generateVirtualTryOn(
       status = await statusResponse.json();
       console.log(`Status check ${attempts + 1}:`, status.status);
       attempts++;
+
+      console.log(status);
 
       if (attempts >= maxAttempts) {
         throw new Error("Request timed out after 5 minutes");
@@ -189,6 +199,8 @@ async function generateVirtualTryOn(
         },
       },
     );
+
+    console.log(resultResponse);
 
     if (!resultResponse.ok) {
       const errorText = await resultResponse.text();

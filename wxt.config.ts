@@ -15,10 +15,10 @@ export default defineConfig({
     name: "Virtual Try-On",
     description: "Replace e-commerce models with your own photo using AI",
     permissions: ["storage", "activeTab", "contextMenus", "scripting"],
-    host_permissions: ["https://*/*"],
+    host_permissions: ["https://*/*", "http://*/*"],
     web_accessible_resources: [
       {
-        resources: ["*.png", "*.jpg", "*.jpeg", "*.gif", "loading.gif"],
+        resources: ["*.png", "*.jpg", "*.jpeg", "*.webp"],
         matches: ["<all_urls>"],
       },
     ],
