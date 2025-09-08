@@ -1,7 +1,7 @@
 export default defineBackground(() => {
   // Context menu for virtual try-on
-  browser.runtime.onInstalled.addListener(() => {
-    browser.contextMenus.create({
+  chrome.runtime.onInstalled.addListener(() => {
+    chrome.contextMenus.create({
       id: "virtual-tryon",
       title: "Virtual Try-On",
       contexts: ["image"],
@@ -9,14 +9,14 @@ export default defineBackground(() => {
   });
 
   // Handle context menu clicks
-  browser.contextMenus.onClicked.addListener(async (info, tab) => {
+  chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     if (info.menuItemId === "virtual-tryon" && info.srcUrl && tab?.id) {
       // Check if user has uploaded their photo
-      const { userPhoto } = await browser.storage.local.get("userPhoto");
+      const { userPhoto } = await chrome.storage.local.get("userPhoto");
 
       if (!userPhoto) {
         // Send message to show popup for photo upload
-        browser.tabs.sendMessage(tab.id, {
+        chrome.tabs.sendMessage(tab.id, {
           type: "SHOW_UPLOAD_PROMPT",
           message: "Please upload your photo first in the extension popup!",
         });
@@ -24,32 +24,32 @@ export default defineBackground(() => {
       }
 
       // Send message to content script to start virtual try-on
-      browser.tabs.sendMessage(tab.id, {
+      chrome.tabs.sendMessage(tab.id, {
         type: "START_VIRTUAL_TRYON",
         imageUrl: info.srcUrl,
-        userPhoto: userPhoto,
+        userPhoto: userPhoto.data,
       });
     }
   });
 
   // Handle messages from content script and popup
-  browser.runtime.onMessage.addListener(
-    async (message, _sender, sendResponse) => {
-      if (message.type === "GENERATE_TRYON_IMAGE") {
+  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+    if (message.type === "GENERATE_TRYON_IMAGE") {
+      (async () => {
         try {
           console.log("Starting virtual try-on generation...");
-          const { userPhoto, productImage, imageElement } = message;
+          const { userPhoto, productImage } = message;
 
           // Generate virtual try-on using Fal AI HTTP API
-          const result = await generateVirtualTryOn(userPhoto, productImage);
-
-          console.log(result);
+          const generatedImage = await generateVirtualTryOn(
+            userPhoto,
+            productImage,
+          );
 
           console.log("Virtual try-on generation successful");
           sendResponse({
             success: true,
-            generatedImage: result,
-            imageElement,
+            generatedImage,
           });
         } catch (error) {
           console.error("Virtual try-on generation failed:", error);
@@ -61,9 +61,11 @@ export default defineBackground(() => {
                 : "Failed to generate virtual try-on image",
           });
         }
-      }
-    },
-  );
+      })();
+
+      return true;
+    }
+  });
 });
 
 // Define interfaces for Fal AI HTTP API
@@ -94,16 +96,9 @@ async function generateVirtualTryOn(
   try {
     console.log("Getting API key from storage...");
     // Get API key from storage first, then fallback to environment
-    const { falApiKey } = await browser.storage.local.get("falApiKey");
-    let apiKey = falApiKey;
+    const { falApiKey } = await chrome.storage.local.get("falApiKey");
 
-    // Fallback to environment variable if not in storage
-    if (!apiKey && typeof process !== "undefined" && process.env?.FAL_KEY) {
-      apiKey = process.env.FAL_KEY;
-      console.log("Using API key from environment variable");
-    }
-
-    if (!apiKey) {
+    if (!falApiKey) {
       throw new Error("Please set your Fal AI API key in the extension popup");
     }
     console.log("API key found, proceeding with request...");
@@ -115,20 +110,18 @@ async function generateVirtualTryOn(
       {
         method: "POST",
         headers: {
-          Authorization: `Key ${apiKey}`,
+          Authorization: `Key ${falApiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           prompt:
-            "Virtual try-on: replace the clothing on the person with the clothing from the second image while keeping the person's body pose, face, and background intact. Make it look natural and realistic.",
+            "Create a professional e-commerce fashion photo. Take the dress from the second image and let the person from the first image wear it. Generate a realistic, full-body shot of the person wearing the dress, with the lighting and shadows adjusted to match the outdoor environment.",
           image_urls: [userPhoto, productImage],
           num_images: 1,
           output_format: "jpeg",
         }),
       },
     );
-
-    console.log(submitResponse);
 
     if (!submitResponse.ok) {
       const errorText = await submitResponse.text();
@@ -141,8 +134,6 @@ async function generateVirtualTryOn(
     const submitResult: QueueSubmitResponse = await submitResponse.json();
     const { request_id } = submitResult;
     console.log("Request submitted successfully, request_id:", request_id);
-
-    console.log(submitResult);
 
     console.log("Polling for completion...");
     // Step 2: Poll status until completion
@@ -157,12 +148,10 @@ async function generateVirtualTryOn(
         `https://queue.fal.run/fal-ai/nano-banana/requests/${request_id}/status`,
         {
           headers: {
-            Authorization: `Key ${apiKey}`,
+            Authorization: `Key ${falApiKey}`,
           },
         },
       );
-
-      console.log(statusResponse);
 
       if (!statusResponse.ok) {
         const errorText = await statusResponse.text();
@@ -175,8 +164,6 @@ async function generateVirtualTryOn(
       status = await statusResponse.json();
       console.log(`Status check ${attempts + 1}:`, status.status);
       attempts++;
-
-      console.log(status);
 
       if (attempts >= maxAttempts) {
         throw new Error("Request timed out after 5 minutes");
@@ -195,12 +182,10 @@ async function generateVirtualTryOn(
       `https://queue.fal.run/fal-ai/nano-banana/requests/${request_id}`,
       {
         headers: {
-          Authorization: `Key ${apiKey}`,
+          Authorization: `Key ${falApiKey}`,
         },
       },
     );
-
-    console.log(resultResponse);
 
     if (!resultResponse.ok) {
       const errorText = await resultResponse.text();

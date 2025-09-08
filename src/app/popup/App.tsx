@@ -27,7 +27,7 @@ function App() {
   useEffect(() => {
     const loadSavedData = async () => {
       try {
-        const result = await browser.storage.local.get([
+        const result = await chrome.storage.local.get([
           "userPhoto",
           "falApiKey",
         ]);
@@ -76,7 +76,7 @@ function App() {
       };
 
       // Save to local storage
-      await browser.storage.local.set({ userPhoto: photoData });
+      await chrome.storage.local.set({ userPhoto: photoData });
       setUserPhoto(photoData);
     } catch (error) {
       console.error("Failed to upload photo:", error);
@@ -88,7 +88,7 @@ function App() {
 
   const handleRemovePhoto = async () => {
     try {
-      await browser.storage.local.remove("userPhoto");
+      await chrome.storage.local.remove("userPhoto");
       setUserPhoto(null);
     } catch (error) {
       console.error("Failed to remove photo:", error);
@@ -103,7 +103,7 @@ function App() {
 
     setIsSavingApiKey(true);
     try {
-      await browser.storage.local.set({ falApiKey: apiKey.trim() });
+      await chrome.storage.local.set({ falApiKey: apiKey.trim() });
       console.log("API key saved successfully");
     } catch (error) {
       console.error("Failed to save API key:", error);

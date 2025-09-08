@@ -2,7 +2,7 @@ export default defineContentScript({
   matches: ["<all_urls>"],
   main() {
     // Listen for messages from background script
-    browser.runtime.onMessage.addListener(async (message) => {
+    chrome.runtime.onMessage.addListener(async (message) => {
       if (message.type === "SHOW_UPLOAD_PROMPT") {
         showUploadPrompt(message.message);
       }
@@ -75,11 +75,8 @@ export default defineContentScript({
       const loadingOverlay = createLoadingOverlay(img);
 
       try {
-        // Convert image to base64 for processing
-        // const productImageBase64 = await imageToBase64(imageUrl);
-
         // Send to background script for AI processing
-        const response = await browser.runtime.sendMessage({
+        const response = await chrome.runtime.sendMessage({
           type: "GENERATE_TRYON_IMAGE",
           userPhoto,
           productImage: productImageUrl,
@@ -110,24 +107,6 @@ export default defineContentScript({
         loadingOverlay.remove();
       }
     }
-
-    // Helper function to convert image URL to base64
-    // async function imageToBase64(imageUrl: string): Promise<string> {
-    //   try {
-    //     const response = await fetch(imageUrl);
-    //     const blob = await response.blob();
-
-    //     return new Promise((resolve, reject) => {
-    //       const reader = new FileReader();
-    //       reader.onload = () => resolve(reader.result as string);
-    //       reader.onerror = reject;
-    //       reader.readAsDataURL(blob);
-    //     });
-    //   } catch (error) {
-    //     console.error("Failed to convert image to base64:", error);
-    //     throw error;
-    //   }
-    // }
 
     // Create loading overlay
     function createLoadingOverlay(img: HTMLImageElement) {
