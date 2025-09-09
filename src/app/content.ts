@@ -61,18 +61,28 @@ export default defineContentScript({
     async function startVirtualTryOn(imageUrl: string, userPhoto: string) {
       const productImageUrl = imageUrl.split("?")[0];
 
-      const img = Array.from(document.querySelectorAll("img")).find((img) =>
-        img.src.includes(productImageUrl),
-      );
+      // const img = Array.from(document.querySelectorAll("img")).find((img) =>
+      //   img.src.includes(productImageUrl),
+      // );
 
-      if (!img) {
-        console.error("Could not find the image element");
+      const matchingImages = Array.from(
+        document.querySelectorAll("img"),
+      ).filter((img) => img.src.includes(productImageUrl));
+
+      if (matchingImages.length === 0) {
+        console.error("Could not find any matching image elements");
         return;
       }
 
+      // Store original sources for all images
+      const originalSources = matchingImages.map((img) => img.src);
+
       // Show loading state
-      const originalSrc = img.src;
-      const loadingOverlay = createLoadingOverlay(img);
+      // const originalSrc = img.src;
+      // const loadingOverlay = createLoadingOverlay(img);
+      const loadingOverlays = matchingImages.map((img) =>
+        createLoadingOverlay(img),
+      );
 
       try {
         // Send to background script for AI processing
@@ -80,17 +90,20 @@ export default defineContentScript({
           type: "GENERATE_TRYON_IMAGE",
           userPhoto,
           productImage: productImageUrl,
-          imageElement: img.outerHTML,
+          // imageElement: img.outerHTML,
         });
 
         console.log(response);
 
         if (response.success) {
           // Replace image with generated result
-          img.src = response.generatedImage;
+          // img.src = response.generatedImage;
+          matchingImages.forEach((img) => {
+            img.src = response.generatedImage;
+          });
 
           // Add a small indicator that this is a virtual try-on
-          addVirtualTryOnIndicator(img);
+          // addVirtualTryOnIndicator(img);
 
           // Show success message
           showSuccessMessage();
@@ -100,11 +113,17 @@ export default defineContentScript({
       } catch (error) {
         console.error("Virtual try-on failed:", error);
         // Restore original image
-        img.src = originalSrc;
+        // img.src = originalSrc;
+        matchingImages.forEach((img, idx) => {
+          img.src = originalSources[idx];
+        });
         showErrorMessage();
       } finally {
         // Remove loading overlay
-        loadingOverlay.remove();
+        // loadingOverlay.remove();
+        loadingOverlays.forEach((overlay) => {
+          overlay.remove();
+        });
       }
     }
 
