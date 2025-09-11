@@ -106,10 +106,7 @@ export default defineContentScript({
       const overlay = document.createElement("div");
       overlay.style.cssText = `
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        inset: 0;
         background: rgba(255, 255, 255, 0.9);
         display: flex;
         align-items: center;
@@ -119,7 +116,7 @@ export default defineContentScript({
       `;
 
       overlay.innerHTML = `
-        <div style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <div style="text-align: center; font-family: -apple-system, "system-ui", sans-serif;">
           <div style="
             width: 40px;
             height: 40px;
@@ -145,22 +142,44 @@ export default defineContentScript({
       `;
       document.head.appendChild(spinnerStyle);
 
-      // Position overlay relative to image
-      const imgRect = img.getBoundingClientRect();
-      const container = document.createElement("div");
-      container.style.cssText = `
-        position: fixed;
-        top: ${imgRect.top + window.scrollY}px;
-        left: ${imgRect.left + window.scrollX}px;
-        width: ${imgRect.width}px;
-        height: ${imgRect.height}px;
-        pointer-events: none;
+      const imgParent = img.parentElement;
+
+      if (imgParent) {
+        imgParent.style.position = "relative";
+
+        imgParent.appendChild(overlay);
+
+        overlay.remove = () => {
+          if (overlay.parentNode) {
+            overlay.parentNode.removeChild(overlay);
+          }
+        };
+      } else {
+        const container = document.createElement("div");
+        container.style.cssText = `
+          position: relative;
+          display: inline-block;
+          width: ${img.width}px;
+          height: ${img.height}px;
       `;
 
-      container.appendChild(overlay);
-      document.body.appendChild(container);
+        img.parentNode?.insertBefore(container, img);
+        container.appendChild(img);
+        container.appendChild(overlay);
 
-      return container;
+        overlay.remove = () => {
+          if (overlay.parentNode) {
+            overlay.parentNode.removeChild(overlay);
+          }
+
+          if (container.parentNode) {
+            container.parentNode.insertBefore(img, container);
+            container.parentNode.removeChild(container);
+          }
+        };
+      }
+
+      return overlay;
     }
 
     // Add virtual try-on indicator
@@ -202,19 +221,36 @@ export default defineContentScript({
           position: fixed;
           top: 20px;
           right: 20px;
-          background: #4CAF50;
-          color: white;
-          padding: 16px 20px;
+          background: white;
+          color: #333;
+          padding: 16px;
           border-radius: 8px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
           z-index: 10000;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-family: -apple-system, "system-ui", sans-serif;
           font-size: 14px;
+          border: 1px solid #e5e7eb;
           animation: slideIn 0.3s ease-out;
+          min-width: 200px;
         ">
           <div style="display: flex; align-items: center; gap: 8px;">
-            <span>✨</span>
-            <span>Virtual try-on generated successfully!</span>
+            <div style="
+              width: 16px;
+              height: 16px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+            ">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" height="20" width="20">
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                    clipRule="evenodd"
+                  />
+              </svg>
+            </div>
+            Virtual try-on generated successfully!
           </div>
         </div>
       `;
