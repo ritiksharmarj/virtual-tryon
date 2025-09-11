@@ -1,7 +1,6 @@
 export default defineContentScript({
   matches: ["<all_urls>"],
   main() {
-    // Listen for messages from background script
     chrome.runtime.onMessage.addListener(async (message) => {
       if (message.type === "SHOW_UPLOAD_PROMPT") {
         showUploadPrompt(message.message);
@@ -12,9 +11,8 @@ export default defineContentScript({
       }
     });
 
-    // Function to show upload prompt
+    // Show upload prompt
     function showUploadPrompt(message: string) {
-      // Create a toast notification
       const toast = document.createElement("div");
       toast.innerHTML = `
         <div style="
@@ -39,7 +37,6 @@ export default defineContentScript({
         </div>
       `;
 
-      // Add animation styles
       const style = document.createElement("style");
       style.textContent = `
         @keyframes slideIn {
@@ -50,39 +47,27 @@ export default defineContentScript({
       document.head.appendChild(style);
       document.body.appendChild(toast);
 
-      // Remove toast after 4 seconds
       setTimeout(() => {
         toast.remove();
         style.remove();
       }, 4000);
     }
 
-    // Function to start virtual try-on process
+    // Start virtual try-on process
     async function startVirtualTryOn(imageUrl: string, userPhoto: string) {
       const productImageUrl = imageUrl.split("?")[0];
 
-      // const img = Array.from(document.querySelectorAll("img")).find((img) =>
-      //   img.src.includes(productImageUrl),
-      // );
+      const img = Array.from(document.querySelectorAll("img")).find(
+        (img) => img.src === imageUrl,
+      );
 
-      const matchingImages = Array.from(
-        document.querySelectorAll("img"),
-      ).filter((img) => img.src.includes(productImageUrl));
-
-      if (matchingImages.length === 0) {
-        console.error("Could not find any matching image elements");
+      if (!img) {
+        console.error("Could not find matching image element.");
         return;
       }
 
-      // Store original sources for all images
-      const originalSources = matchingImages.map((img) => img.src);
-
-      // Show loading state
-      // const originalSrc = img.src;
-      // const loadingOverlay = createLoadingOverlay(img);
-      const loadingOverlays = matchingImages.map((img) =>
-        createLoadingOverlay(img),
-      );
+      const originalSrc = img.src;
+      const loadingOverlay = createLoadingOverlay(img);
 
       try {
         // Send to background script for AI processing
@@ -93,14 +78,9 @@ export default defineContentScript({
           // imageElement: img.outerHTML,
         });
 
-        console.log(response);
-
         if (response.success) {
           // Replace image with generated result
-          // img.src = response.generatedImage;
-          matchingImages.forEach((img) => {
-            img.src = response.generatedImage;
-          });
+          img.src = response.generatedImage;
 
           // Add a small indicator that this is a virtual try-on
           // addVirtualTryOnIndicator(img);
@@ -113,17 +93,11 @@ export default defineContentScript({
       } catch (error) {
         console.error("Virtual try-on failed:", error);
         // Restore original image
-        // img.src = originalSrc;
-        matchingImages.forEach((img, idx) => {
-          img.src = originalSources[idx];
-        });
+        img.src = originalSrc;
+
         showErrorMessage();
       } finally {
-        // Remove loading overlay
-        // loadingOverlay.remove();
-        loadingOverlays.forEach((overlay) => {
-          overlay.remove();
-        });
+        loadingOverlay.remove();
       }
     }
 
@@ -190,35 +164,35 @@ export default defineContentScript({
     }
 
     // Add virtual try-on indicator
-    function addVirtualTryOnIndicator(img: HTMLImageElement) {
-      const indicator = document.createElement("div");
-      indicator.style.cssText = `
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-        color: white;
-        padding: 4px 8px;
-        border-radius: 12px;
-        font-size: 11px;
-        font-weight: 600;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        z-index: 100;
-      `;
-      indicator.textContent = "✨ Virtual Try-On";
+    // function addVirtualTryOnIndicator(img: HTMLImageElement) {
+    //   const indicator = document.createElement("div");
+    //   indicator.style.cssText = `
+    //     position: absolute;
+    //     top: 8px;
+    //     left: 8px;
+    //     background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+    //     color: white;
+    //     padding: 4px 8px;
+    //     border-radius: 12px;
+    //     font-size: 11px;
+    //     font-weight: 600;
+    //     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    //     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    //     z-index: 100;
+    //   `;
+    //   indicator.textContent = "✨ Virtual Try-On";
 
-      // Position relative to image
-      const imgRect = img.getBoundingClientRect();
-      indicator.style.position = "fixed";
-      indicator.style.top = `${imgRect.top + window.scrollY + 8}px`;
-      indicator.style.left = `${imgRect.left + window.scrollX + 8}px`;
+    //   // Position relative to image
+    //   const imgRect = img.getBoundingClientRect();
+    //   indicator.style.position = "fixed";
+    //   indicator.style.top = `${imgRect.top + window.scrollY + 8}px`;
+    //   indicator.style.left = `${imgRect.left + window.scrollX + 8}px`;
 
-      document.body.appendChild(indicator);
+    //   document.body.appendChild(indicator);
 
-      // Remove indicator after 3 seconds
-      setTimeout(() => indicator.remove(), 3000);
-    }
+    //   // Remove indicator after 3 seconds
+    //   setTimeout(() => indicator.remove(), 3000);
+    // }
 
     // Show success message
     function showSuccessMessage() {
