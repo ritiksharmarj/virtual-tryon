@@ -25,7 +25,7 @@ function App() {
 
   // Load saved photo and fal api key
   useEffect(() => {
-    const loadSavedData = async () => {
+    async function loadSavedData() {
       try {
         const result = await chrome.storage.local.get([
           "userPhoto",
@@ -40,7 +40,7 @@ function App() {
       } catch (error) {
         console.error("Failed to load saved data:", error);
       }
-    };
+    }
 
     loadSavedData();
   }, []);
