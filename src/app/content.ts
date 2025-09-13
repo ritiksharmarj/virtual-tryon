@@ -201,7 +201,7 @@ export default defineContentScript({
           min-width: 200px;
         ">
           <div style="display: flex; align-items: center; gap: 6px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#171717" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check-icon lucide-circle-check" style="flex-shrink: 0;" >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#171717" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
               <circle stroke="#171717" cx="12" cy="12" r="10"/>
               <path stroke="#ffffff" d="m9 12 2 2 4-4"/>
             </svg>
@@ -222,19 +222,26 @@ export default defineContentScript({
           position: fixed;
           top: 20px;
           right: 20px;
-          background: #F44336;
-          color: white;
-          padding: 16px 20px;
+          background: #ffffff;
+          color: #171717;
+          padding: 16px;
           border-radius: 8px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
           z-index: 10000;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
           font-size: 14px;
+          font-weight: 500;
+          border: 1px solid #F3F3F3;
           animation: slideIn 0.3s ease-out;
+          min-width: 200px;
         ">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span>❌</span>
-            <span>Failed to generate virtual try-on. Please try again.</span>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#171717" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+              <circle stroke="#171717" cx="12" cy="12" r="10"/>
+              <line stroke="#ffffff" x1="12" x2="12" y1="8" y2="12"/>
+              <line stroke="#ffffff" x1="12" x2="12.01" y1="16" y2="16"/>
+            </svg>
+            Failed to generate virtual try-on.
           </div>
         </div>
       `;
