@@ -68,7 +68,6 @@ export default defineBackground(() => {
   });
 });
 
-// Define interfaces for Fal AI HTTP API
 interface VirtualTryOnResponse {
   images: Array<{
     url: string;
