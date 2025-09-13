@@ -19,20 +19,25 @@ export default defineContentScript({
           position: fixed;
           top: 20px;
           right: 20px;
-          background: #FF6B6B;
-          color: white;
-          padding: 16px 20px;
+          background: #ffffff;
+          color: #171717;
+          padding: 16px;
           border-radius: 8px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
           z-index: 10000;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
           font-size: 14px;
-          max-width: 350px;
+          font-weight: 500;
+          border: 1px solid #F3F3F3;
           animation: slideIn 0.3s ease-out;
+          min-width: 200px;
         ">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span>📸</span>
-            <span>${message}</span>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#171717" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+              <path stroke="#171717" d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"/>
+              <circle stroke="#ffffff" cx="12" cy="13" r="3"/>
+            </svg>
+            ${message}
           </div>
         </div>
       `;
