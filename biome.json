@@ -37,7 +37,8 @@
       "correctness": {
         "noUnusedFunctionParameters": "warn",
         "noUnusedVariables": "warn",
-        "noUnusedImports": "warn"
+        "noUnusedImports": "warn",
+        "useUniqueElementIds": "off"
       },
       "style": {
         "noNonNullAssertion": "off"

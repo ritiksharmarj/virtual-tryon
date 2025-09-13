@@ -1,14 +1,15 @@
-import {
-  Camera,
-  Key,
-  Loader2Icon,
-  Sparkles,
-  Trash2,
-  Upload,
-} from "lucide-react";
+import { ImageIcon, Loader2Icon, Trash2Icon, UploadIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { fileToBase64 } from "@/lib/utils";
 
 interface UserPhoto {
@@ -114,9 +115,9 @@ function App() {
   };
 
   return (
-    <div className="min-h-96 w-80 bg-gradient-to-br from-purple-50 to-blue-50 p-6">
+    <div className="flex w-80 flex-col gap-4 p-4">
       {/* Header */}
-      <div className="mb-6 text-center">
+      {/* <div className="mb-6 text-center">
         <div className="mb-2 flex items-center justify-center gap-2">
           <Sparkles className="text-purple-600" size={24} />
           <h1 className="font-bold text-gray-800 text-xl">Virtual Try-On</h1>
@@ -124,127 +125,97 @@ function App() {
         <p className="text-gray-600 text-sm">
           Upload your photo to try on clothes virtually
         </p>
-      </div>
+      </div> */}
 
       {/* API Key Section */}
-      <div className="mb-6">
-        <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
-          <div className="mb-2 flex items-center gap-2">
-            <Key className="text-orange-600" size={16} />
-            <h3 className="font-medium text-orange-800 text-sm">
-              Setup Required
-            </h3>
-          </div>
-          <p className="mb-3 text-orange-700 text-xs">
+      <Card>
+        <CardHeader>
+          <CardTitle>Setup Required</CardTitle>
+          <CardDescription>
             Please enter your Fal AI API key to use virtual try-on
-          </p>
-
-          <div className="space-y-2">
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
             <Input
               type="text"
               placeholder="Enter your Fal API key"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
             />
-            <Button onClick={handleSaveApiKey} disabled={isSavingApiKey}>
+            <Button
+              onClick={handleSaveApiKey}
+              disabled={isSavingApiKey}
+              className="w-full"
+            >
               {isSavingApiKey && <Loader2Icon className="animate-spin" />}
               Save API Key
             </Button>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Photo Upload Section */}
-      <div className="space-y-4">
-        {!userPhoto ? (
-          <div className="rounded-lg border-2 border-purple-300 border-dashed p-6 text-center">
-            <Camera className="mx-auto mb-3 text-purple-400" size={32} />
-            <h3 className="mb-2 font-medium text-gray-700">
-              Upload Your Photo
-            </h3>
-            <p className="mb-4 text-gray-500 text-xs">
-              Choose a clear photo of yourself for better results
-            </p>
-
-            {/** biome-ignore lint/a11y/noLabelWithoutControl: Chack later */}
-            <label className="cursor-pointer">
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={handleFileUpload}
-                className="hidden"
-                disabled={isUploading}
-              />
-              <div className="flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2 font-medium text-sm text-white transition-colors hover:bg-purple-700">
-                {isUploading ? (
-                  <>
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                    Uploading...
-                  </>
-                ) : (
-                  <>
-                    <Upload size={16} />
-                    Choose Photo
-                  </>
-                )}
-              </div>
-            </label>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {/* Uploaded Photo Preview */}
+      <Card>
+        <CardContent className="flex flex-col items-center">
+          {!userPhoto ? (
+            <>
+              <ImageIcon size={32} />
+              <h3 className="mt-3 font-semibold text-base">
+                Upload Your Photo
+              </h3>
+              <p className="mb-2 text-center text-muted-foreground text-sm">
+                Choose a clear photo of yourself for better results
+              </p>
+            </>
+          ) : (
             <div className="relative">
               <img
                 src={userPhoto.data}
-                alt="User profile for virtual try-on"
-                className="h-48 w-full rounded-lg border border-gray-200 object-cover"
+                alt={userPhoto.name}
+                className="aspect-3/2 rounded-lg border object-cover"
               />
               <Button
                 onClick={handleRemovePhoto}
-                className="absolute top-2 right-2 rounded-full"
+                className="absolute top-2 right-2"
                 variant="destructive"
                 size="icon"
                 title="Remove photo"
               >
-                <Trash2 size={14} />
+                <Trash2Icon />
               </Button>
             </div>
+          )}
 
-            {/* Photo Info */}
-            <div className="rounded-lg border border-gray-200 bg-white p-3">
-              <div className="flex items-center justify-between">
+          <div className="mt-4 w-full">
+            <Input
+              id="file-upload"
+              type="file"
+              accept="image/*"
+              onChange={handleFileUpload}
+              disabled={isUploading}
+              className="hidden"
+            />
+
+            <Label htmlFor="file-upload">
+              <Button
+                asChild
+                className="w-full"
+                variant={userPhoto ? "outline" : "default"}
+              >
                 <div>
-                  <p className="truncate font-medium text-gray-700 text-sm">
-                    {userPhoto.name}
-                  </p>
-                  <p className="text-gray-500 text-xs">
-                    Uploaded{" "}
-                    {new Date(userPhoto.createdAt).toLocaleDateString()}
-                  </p>
+                  {isUploading ? (
+                    <Loader2Icon className="animate-spin" />
+                  ) : (
+                    <UploadIcon />
+                  )}
+                  Upload {userPhoto && "new"} image
                 </div>
-                <div className="flex-shrink-0">
-                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                </div>
-              </div>
-            </div>
-
-            {/* Upload New Photo Button */}
-            <label className="block cursor-pointer">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileUpload}
-                className="hidden"
-                disabled={isUploading}
-              />
-              <div className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 font-medium text-gray-700 text-sm transition-colors hover:bg-gray-200">
-                <Upload size={16} />
-                Upload New Photo
-              </div>
-            </label>
+              </Button>
+            </Label>
           </div>
-        )}
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Instructions */}
       <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
