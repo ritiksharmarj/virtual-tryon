@@ -82,9 +82,6 @@ export default defineContentScript({
           // Replace image with generated result
           img.src = response.generatedImage;
 
-          // Add a small indicator that this is a virtual try-on
-          // addVirtualTryOnIndicator(img);
-
           // Show success message
           showSuccessMessage();
         } else {
@@ -182,37 +179,6 @@ export default defineContentScript({
       return overlay;
     }
 
-    // Add virtual try-on indicator
-    // function addVirtualTryOnIndicator(img: HTMLImageElement) {
-    //   const indicator = document.createElement("div");
-    //   indicator.style.cssText = `
-    //     position: absolute;
-    //     top: 8px;
-    //     left: 8px;
-    //     background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-    //     color: white;
-    //     padding: 4px 8px;
-    //     border-radius: 12px;
-    //     font-size: 11px;
-    //     font-weight: 600;
-    //     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    //     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    //     z-index: 100;
-    //   `;
-    //   indicator.textContent = "✨ Virtual Try-On";
-
-    //   // Position relative to image
-    //   const imgRect = img.getBoundingClientRect();
-    //   indicator.style.position = "fixed";
-    //   indicator.style.top = `${imgRect.top + window.scrollY + 8}px`;
-    //   indicator.style.left = `${imgRect.left + window.scrollX + 8}px`;
-
-    //   document.body.appendChild(indicator);
-
-    //   // Remove indicator after 3 seconds
-    //   setTimeout(() => indicator.remove(), 3000);
-    // }
-
     // Show success message
     function showSuccessMessage() {
       const toast = document.createElement("div");
@@ -221,42 +187,31 @@ export default defineContentScript({
           position: fixed;
           top: 20px;
           right: 20px;
-          background: white;
-          color: #333;
+          background: #ffffff;
+          color: #171717;
           padding: 16px;
           border-radius: 8px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
           z-index: 10000;
-          font-family: -apple-system, "system-ui", sans-serif;
+          font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
           font-size: 14px;
-          border: 1px solid #e5e7eb;
+          font-weight: 500;
+          border: 1px solid #F3F3F3;
           animation: slideIn 0.3s ease-out;
           min-width: 200px;
         ">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <div style="
-              width: 16px;
-              height: 16px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              flex-shrink: 0;
-            ">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" height="20" width="20">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                    clipRule="evenodd"
-                  />
-              </svg>
-            </div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#171717" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check-icon lucide-circle-check" style="flex-shrink: 0;" >
+              <circle stroke="#171717" cx="12" cy="12" r="10"/>
+              <path stroke="#ffffff" d="m9 12 2 2 4-4"/>
+            </svg>
             Virtual try-on generated successfully!
           </div>
         </div>
       `;
 
       document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
+      setTimeout(() => toast.remove(), 4000);
     }
 
     // Show error message
