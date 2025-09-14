@@ -13,13 +13,14 @@ export default defineConfig({
     }) as WxtViteConfig,
   manifest: {
     name: "Virtual Try-On",
-    description: "Replace e-commerce models with your own photo using AI",
+    description: "Shop Smarter. Try It On Before You Buy.",
+    action: { default_title: "Virtual Try-On" },
     permissions: ["storage", "activeTab", "contextMenus", "scripting"],
     host_permissions: ["https://*/*", "http://*/*"],
     web_accessible_resources: [
       {
-        resources: ["*.png", "*.jpg", "*.jpeg", "*.webp"],
         matches: ["<all_urls>"],
+        resources: ["*.png", "*.jpg", "*.jpeg", "*.webp"],
       },
     ],
   },

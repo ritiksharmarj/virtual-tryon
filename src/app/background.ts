@@ -15,7 +15,6 @@ export default defineBackground(() => {
       const { userPhoto } = await chrome.storage.local.get("userPhoto");
 
       if (!userPhoto) {
-        // Send message to show popup for photo upload
         chrome.tabs.sendMessage(tab.id, {
           type: "UPLOAD_IMAGE",
           message: "Please upload your photo first in the extension.",
@@ -40,7 +39,6 @@ export default defineBackground(() => {
           console.log("Starting virtual try-on generation...");
           const { userPhoto, productImage } = message;
 
-          // Generate virtual try-on using Fal AI HTTP API
           const generatedImage = await generateVirtualTryOn(
             userPhoto,
             productImage,
@@ -102,7 +100,6 @@ async function generateVirtualTryOn(
       throw new Error("Please set your Fal AI API key in the extension.");
     }
 
-    console.log("Submitting request to Fal AI...");
     // Step 1: Submit request to Fal AI queue
     const submitResponse = await fetch(
       "https://queue.fal.run/fal-ai/nano-banana/edit",
@@ -139,9 +136,8 @@ async function generateVirtualTryOn(
 
     const submitResult: QueueSubmitResponse = await submitResponse.json();
     const { request_id } = submitResult;
-    console.log("Request submitted successfully, request_id:", request_id);
+    console.log("Request submitted successfully", request_id);
 
-    console.log("Polling for completion...");
     // Step 2: Poll status until completion
     let status: QueueStatusResponse;
     let attempts = 0;
@@ -174,13 +170,11 @@ async function generateVirtualTryOn(
       }
     } while (status.status === "IN_QUEUE" || status.status === "IN_PROGRESS");
 
-    // Check if request failed
     if (status.status === "FAILED") {
       console.error("Request failed on server:", status.logs);
       throw new Error("Virtual try-on generation failed on server");
     }
 
-    console.log("Request completed, fetching result...");
     // Step 3: Get the result
     const resultResponse = await fetch(
       `https://queue.fal.run/fal-ai/nano-banana/requests/${request_id}`,

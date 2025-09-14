@@ -33,14 +33,12 @@ export default defineContentScript({
           type: "GENERATE_TRYON_IMAGE",
           userPhoto,
           productImage: productImageUrl,
-          // imageElement: img.outerHTML,
         });
 
         if (response.success) {
           // Replace image with generated result
           img.src = response.generatedImage;
 
-          // Show success message
           showSuccessMessage();
         } else {
           throw new Error(response.error);
@@ -56,7 +54,6 @@ export default defineContentScript({
       }
     }
 
-    // Create loading overlay
     function createLoadingOverlay(img: HTMLImageElement) {
       const overlay = document.createElement("div");
       overlay.style.cssText = `
@@ -71,19 +68,27 @@ export default defineContentScript({
       `;
 
       overlay.innerHTML = `
-        <div style="text-align: center; font-family: -apple-system, "system-ui", sans-serif;">
+        <div style="
+        text-align: center; 
+        font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        color: #171717;
+        font-size: 14px;
+        font-weight: 500;
+        ">
           <div style="
             width: 40px;
             height: 40px;
             border: 3px solid #f3f3f3;
-            border-top: 3px solid #FF6B6B;
+            border-top: 3px solid #FF4D00;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto 12px;
           "></div>
-          <div style="color: #333; font-size: 14px; font-weight: 500;">
-            Generating virtual try-on...
-          </div>
+          Generating virtual try-on...
         </div>
       `;
 
@@ -137,7 +142,6 @@ export default defineContentScript({
       return overlay;
     }
 
-    // Show success message
     function showSuccessMessage() {
       const toast = document.createElement("div");
       toast.innerHTML = `
@@ -186,8 +190,7 @@ export default defineContentScript({
       }, 4000);
     }
 
-    // Show error message
-    function showErrorMessage(message = "") {
+    function showErrorMessage(message: string) {
       const toast = document.createElement("div");
       toast.innerHTML = `
         <div style="
@@ -233,7 +236,7 @@ export default defineContentScript({
       setTimeout(() => {
         toast.remove();
         style.remove();
-      }, 8000);
+      }, 4000);
     }
   },
 });
