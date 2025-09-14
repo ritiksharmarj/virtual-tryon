@@ -3,62 +3,13 @@ export default defineContentScript({
   main() {
     chrome.runtime.onMessage.addListener(async (message) => {
       if (message.type === "UPLOAD_IMAGE") {
-        showUploadImageError(message.message);
+        showErrorMessage(message.message);
       }
 
       if (message.type === "START_VIRTUAL_TRYON") {
         await startVirtualTryOn(message.imageUrl, message.userPhoto);
       }
     });
-
-    // Show upload prompt
-    function showUploadImageError(message: string) {
-      const toast = document.createElement("div");
-      toast.innerHTML = `
-        <div style="
-          position: fixed;
-          top: 20px;
-          right: 20px;
-          background: #ffffff;
-          color: #171717;
-          padding: 16px;
-          border-radius: 8px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-          z-index: 10000;
-          font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-          font-size: 14px;
-          font-weight: 500;
-          border: 1px solid #F3F3F3;
-          min-width: 200px;
-          opacity: 0;
-          transform: translateY(50px);
-          animation: slideUp 0.15s ease-out forwards;
-        ">
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#171717" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-              <path stroke="#171717" d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"/>
-              <circle stroke="#ffffff" cx="12" cy="13" r="3"/>
-            </svg>
-            ${message}
-          </div>
-        </div>
-      `;
-
-      const style = document.createElement("style");
-      style.textContent = `
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(50px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `;
-      document.head.appendChild(style);
-      document.body.appendChild(toast);
-
-      setTimeout(() => {
-        toast.remove();
-        style.remove();
-      }, 8000);
-    }
 
     // Start virtual try-on process
     async function startVirtualTryOn(imageUrl: string, userPhoto: string) {
