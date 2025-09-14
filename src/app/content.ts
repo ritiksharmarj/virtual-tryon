@@ -2,8 +2,8 @@ export default defineContentScript({
   matches: ["<all_urls>"],
   main() {
     chrome.runtime.onMessage.addListener(async (message) => {
-      if (message.type === "SHOW_UPLOAD_PROMPT") {
-        showUploadPrompt(message.message);
+      if (message.type === "UPLOAD_IMAGE") {
+        showUploadImageError(message.message);
       }
 
       if (message.type === "START_VIRTUAL_TRYON") {
@@ -12,7 +12,7 @@ export default defineContentScript({
     });
 
     // Show upload prompt
-    function showUploadPrompt(message: string) {
+    function showUploadImageError(message: string) {
       const toast = document.createElement("div");
       toast.innerHTML = `
         <div style="
@@ -29,8 +29,10 @@ export default defineContentScript({
           font-size: 14px;
           font-weight: 500;
           border: 1px solid #F3F3F3;
-          animation: slideIn 0.3s ease-out;
           min-width: 200px;
+          opacity: 0;
+          transform: translateY(50px);
+          animation: slideUp 0.15s ease-out forwards;
         ">
           <div style="display: flex; align-items: center; gap: 6px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#171717" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
@@ -44,9 +46,9 @@ export default defineContentScript({
 
       const style = document.createElement("style");
       style.textContent = `
-        @keyframes slideIn {
-          from { transform: translateX(100%); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(50px); }
+          to { opacity: 1; transform: translateY(0); }
         }
       `;
       document.head.appendChild(style);
@@ -55,7 +57,7 @@ export default defineContentScript({
       setTimeout(() => {
         toast.remove();
         style.remove();
-      }, 4000);
+      }, 8000);
     }
 
     // Start virtual try-on process
@@ -97,7 +99,7 @@ export default defineContentScript({
         // Restore original image
         img.src = originalSrc;
 
-        showErrorMessage();
+        showErrorMessage(String(error));
       } finally {
         loadingOverlay.remove();
       }
@@ -202,8 +204,10 @@ export default defineContentScript({
           font-size: 14px;
           font-weight: 500;
           border: 1px solid #F3F3F3;
-          animation: slideIn 0.3s ease-out;
           min-width: 200px;
+          opacity: 0;
+          transform: translateY(50px);
+          animation: slideUp 0.15s ease-out forwards;
         ">
           <div style="display: flex; align-items: center; gap: 6px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#171717" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
@@ -215,12 +219,24 @@ export default defineContentScript({
         </div>
       `;
 
+      const style = document.createElement("style");
+      style.textContent = `
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(50px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `;
+      document.head.appendChild(style);
       document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 4000);
+
+      setTimeout(() => {
+        toast.remove();
+        style.remove();
+      }, 4000);
     }
 
     // Show error message
-    function showErrorMessage() {
+    function showErrorMessage(message = "") {
       const toast = document.createElement("div");
       toast.innerHTML = `
         <div style="
@@ -237,8 +253,10 @@ export default defineContentScript({
           font-size: 14px;
           font-weight: 500;
           border: 1px solid #F3F3F3;
-          animation: slideIn 0.3s ease-out;
           min-width: 200px;
+          opacity: 0;
+          transform: translateY(50px);
+          animation: slideUp 0.15s ease-out forwards;
         ">
           <div style="display: flex; align-items: center; gap: 6px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#171717" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
@@ -246,13 +264,25 @@ export default defineContentScript({
               <line stroke="#ffffff" x1="12" x2="12" y1="8" y2="12"/>
               <line stroke="#ffffff" x1="12" x2="12.01" y1="16" y2="16"/>
             </svg>
-            Failed to generate virtual try-on.
+            ${message ? message : "Failed to generate virtual try-on."}
           </div>
         </div>
       `;
 
+      const style = document.createElement("style");
+      style.textContent = `
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(50px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `;
+      document.head.appendChild(style);
       document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 4000);
+
+      setTimeout(() => {
+        toast.remove();
+        style.remove();
+      }, 8000);
     }
   },
 });

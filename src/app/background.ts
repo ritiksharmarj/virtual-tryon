@@ -17,8 +17,8 @@ export default defineBackground(() => {
       if (!userPhoto) {
         // Send message to show popup for photo upload
         chrome.tabs.sendMessage(tab.id, {
-          type: "SHOW_UPLOAD_PROMPT",
-          message: "Please upload your photo first in the extension popup!",
+          type: "UPLOAD_IMAGE",
+          message: "Please upload your photo first in the extension.",
         });
         return;
       }
@@ -93,14 +93,14 @@ async function generateVirtualTryOn(
   productImage: string,
 ): Promise<string> {
   try {
-    console.log("Getting API key from storage...");
     // Get API key from storage first, then fallback to environment
     const { falApiKey } = await chrome.storage.local.get("falApiKey");
 
-    if (!falApiKey) {
-      throw new Error("Please set your Fal AI API key in the extension popup");
+    const apiKey = falApiKey ?? import.meta.env.WXT_FAL_KEY;
+
+    if (!apiKey) {
+      throw new Error("Please set your Fal AI API key in the extension.");
     }
-    console.log("API key found, proceeding with request...");
 
     console.log("Submitting request to Fal AI...");
     // Step 1: Submit request to Fal AI queue
@@ -109,12 +109,12 @@ async function generateVirtualTryOn(
       {
         method: "POST",
         headers: {
-          Authorization: `Key ${falApiKey}`,
+          Authorization: `Key ${apiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           prompt:
-            "Create a professional e-commerce fashion photo. Take the dress from the second image and let the person from the first image wear it. Generate a realistic, full-body shot of the person wearing the dress, with the lighting and shadows adjusted to match the outdoor environment.",
+            "Create a professional e-commerce fashion photo. Take the dress from the second image and let the person from the first image wear it. Keep the person from the first image body pose, face, and background intact. Make it look natural and realistic.",
           image_urls: [userPhoto, productImage],
           num_images: 1,
           output_format: "jpeg",
@@ -125,9 +125,16 @@ async function generateVirtualTryOn(
     if (!submitResponse.ok) {
       const errorText = await submitResponse.text();
       console.error("Submit request failed:", submitResponse.status, errorText);
-      throw new Error(
-        `Failed to submit request: ${submitResponse.status} ${submitResponse.statusText}`,
-      );
+
+      if (submitResponse.status === 402) {
+        throw new Error("Insufficient balance");
+      }
+
+      if (submitResponse.status === 401) {
+        throw new Error("Please check your Fal API key.");
+      }
+
+      throw new Error(`${submitResponse.status} ${errorText}`);
     }
 
     const submitResult: QueueSubmitResponse = await submitResponse.json();
@@ -147,7 +154,7 @@ async function generateVirtualTryOn(
         `https://queue.fal.run/fal-ai/nano-banana/requests/${request_id}/status`,
         {
           headers: {
-            Authorization: `Key ${falApiKey}`,
+            Authorization: `Key ${apiKey}`,
           },
         },
       );
@@ -155,9 +162,7 @@ async function generateVirtualTryOn(
       if (!statusResponse.ok) {
         const errorText = await statusResponse.text();
         console.error("Status check failed:", statusResponse.status, errorText);
-        throw new Error(
-          `Failed to check status: ${statusResponse.status} ${statusResponse.statusText}`,
-        );
+        throw new Error(`Failed to check status: ${statusResponse.statusText}`);
       }
 
       status = await statusResponse.json();
@@ -181,7 +186,7 @@ async function generateVirtualTryOn(
       `https://queue.fal.run/fal-ai/nano-banana/requests/${request_id}`,
       {
         headers: {
-          Authorization: `Key ${falApiKey}`,
+          Authorization: `Key ${apiKey}`,
         },
       },
     );
@@ -189,9 +194,7 @@ async function generateVirtualTryOn(
     if (!resultResponse.ok) {
       const errorText = await resultResponse.text();
       console.error("Result fetch failed:", resultResponse.status, errorText);
-      throw new Error(
-        `Failed to get result: ${resultResponse.status} ${resultResponse.statusText}`,
-      );
+      throw new Error(`Failed to get result: ${resultResponse.statusText}`);
     }
 
     const result: VirtualTryOnResponse = await resultResponse.json();
