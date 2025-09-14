@@ -116,17 +116,6 @@ function App() {
 
   return (
     <div className="flex w-80 flex-col gap-4 p-4">
-      {/* Header */}
-      {/* <div className="mb-6 text-center">
-        <div className="mb-2 flex items-center justify-center gap-2">
-          <Sparkles className="text-purple-600" size={24} />
-          <h1 className="font-bold text-gray-800 text-xl">Virtual Try-On</h1>
-        </div>
-        <p className="text-gray-600 text-sm">
-          Upload your photo to try on clothes virtually
-        </p>
-      </div> */}
-
       {/* API Key Section */}
       <Card>
         <CardHeader>
@@ -208,7 +197,7 @@ function App() {
                 ) : (
                   <UploadIcon />
                 )}
-                Upload {userPhoto && "new"} image
+                Upload {userPhoto && "New"} Image
               </Label>
             </Button>
           </div>
@@ -216,13 +205,13 @@ function App() {
       </Card>
 
       {/* Instructions */}
-      <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
-        <h4 className="mb-2 font-medium text-blue-800 text-sm">How to use:</h4>
-        <ol className="space-y-1 text-blue-700 text-xs">
-          <li>1. Upload your photo above</li>
-          <li>2. Right-click on clothing image</li>
-          <li>3. Select "Virtual Try-On" from the menu</li>
-          <li>4. Wait for the AI to generate your virtual try-on!</li>
+      <div>
+        <h3 className="font-semibold text-base">How to use:</h3>
+        <ol className="mt-1 list-inside list-decimal text-muted-foreground text-sm">
+          <li>Upload your photo above</li>
+          <li>Right-click on clothing image</li>
+          <li>Select "Virtual Try-On" from the menu</li>
+          <li>Wait for the AI to generate your virtual try-on!</li>
         </ol>
       </div>
     </div>
