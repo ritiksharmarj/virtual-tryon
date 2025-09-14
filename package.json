@@ -1,8 +1,8 @@
 {
   "name": "virtual-tryon",
-  "description": "manifest.json description",
+  "description": "Shop Smarter. Try It On Before You Buy.",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0",
   "type": "module",
   "scripts": {
     "dev": "wxt",
