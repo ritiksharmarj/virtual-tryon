@@ -197,22 +197,20 @@ function App() {
               className="hidden"
             />
 
-            <Label htmlFor="file-upload">
-              <Button
-                asChild
-                className="w-full"
-                variant={userPhoto ? "outline" : "default"}
-              >
-                <div>
-                  {isUploading ? (
-                    <Loader2Icon className="animate-spin" />
-                  ) : (
-                    <UploadIcon />
-                  )}
-                  Upload {userPhoto && "new"} image
-                </div>
-              </Button>
-            </Label>
+            <Button
+              asChild
+              className="w-full"
+              variant={userPhoto ? "outline" : "default"}
+            >
+              <Label htmlFor="file-upload">
+                {isUploading ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  <UploadIcon />
+                )}
+                Upload {userPhoto && "new"} image
+              </Label>
+            </Button>
           </div>
         </CardContent>
       </Card>
