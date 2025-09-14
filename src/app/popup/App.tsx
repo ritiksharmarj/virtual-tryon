@@ -1,5 +1,6 @@
 import { ImageIcon, Loader2Icon, Trash2Icon, UploadIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { GithubIcon, LogoIcon, TwitterIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -116,6 +117,32 @@ function App() {
 
   return (
     <div className="flex w-80 flex-col gap-4 p-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <LogoIcon className="size-8" />
+
+        <div className="flex items-center gap-0.5">
+          <Button size="icon" variant="ghost" asChild>
+            <a
+              href="https://github.com/ritiksharmarj/virtual-tryon"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <GithubIcon />
+            </a>
+          </Button>
+          <Button size="icon" variant="ghost" asChild>
+            <a
+              href="https://x.com/ritiksharmarj"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <TwitterIcon />
+            </a>
+          </Button>
+        </div>
+      </div>
+
       {/* API Key Section */}
       <Card>
         <CardHeader>
