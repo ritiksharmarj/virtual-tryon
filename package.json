@@ -2,7 +2,7 @@
   "name": "virtual-tryon",
   "description": "Try on clothes online before you buy.",
   "private": true,
-  "version": "1.0",
+  "version": "1.1",
   "type": "module",
   "scripts": {
     "dev": "wxt",
