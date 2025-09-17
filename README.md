@@ -1,32 +1,30 @@
-# Virtual Try-On Chrome Extension
+# Virtual Try-On
 
-🔗 Extension - [Virtual Try-On](https://chromewebstore.google.com/detail/glimeidbokkhofiiloikgdnkdnofpjbd?utm_source=item-share-cb)
+🏄‍♂️ [Chrome extension](https://ritiksharma.me/virtual-try-on)
 
-This extension lets you virtually try on clothes from any e-commerce website using Gemini Flash Image Model (NanoBanana). You just upload your photo once, and then whenever you see a clothing image you like, right-click on it and select 'Virtual Try-On.' The AI then generates a realistic image of you wearing that outfit right there on the page.
+[![Virtual Try-On Cover Image](https://github.com/user-attachments/assets/425a55c9-eaa6-4460-b554-3af37c85e865)](https://www.youtube.com/watch?v=OZUYG-LK7Bs)
 
-Works best with clear, well-lit photos and form-fitting clothing. Supports all major e-commerce sites including Amazon, Zara, Bewakoof, TheSouledStore, and thousands more!
+This chrome extension lets you virtually try on clothes from any e-commerce website using Nano Banana. Simply upload your photo once, and whenever you see a clothing image you like, right-click on it and select 'Virtual Try-On.' The AI generates a realistic image of you wearing that outfit directly on the page. This tool is designed to enhance your online shopping experience by providing a realistic preview of how clothes will look on you before making a purchase.
 
-## 🛍️ Perfect For:
+## Key Features:
 
-- Online fashion shopping on any website
-- Trying different styles before buying
-- Reducing returns and exchanges
-- Confident purchase decisions
-- Fashion experimentation
+- Works on any e-commerce site, including Amazon, Zara, Bewakoof, TheSouledStore and more.
+- Reduces returns and exchanges by allowing you to try different styles before buying.
+- Ensures confident purchase decisions and encourages fashion experimentation.
 
-## 🔒 Privacy & Security:
+## Privacy & Security:
 
 - Photos and API key stored locally
 - No data sent to our servers
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - [WXT](https://wxt.dev/) – Framework
 - [TypeScript](https://www.typescriptlang.org/) – Language
 - [Tailwind](https://tailwindcss.com/) – CSS
 - [Nano Banana](https://fal.ai/) - Gemini Flash Image Model
 
-## 🛠️ Setup & Installation
+## Setup & Installation
 
 ### Prerequisites
 
