@@ -13,7 +13,7 @@ export default defineConfig({
     }) as WxtViteConfig,
   manifest: {
     name: "Virtual Try-On",
-    description: "Shop Smarter. Try It On Before You Buy.",
+    description: "Try on clothes online before you buy.",
     action: { default_title: "Virtual Try-On" },
     permissions: ["storage", "activeTab", "contextMenus", "scripting"],
     host_permissions: ["https://*/*", "http://*/*"],
