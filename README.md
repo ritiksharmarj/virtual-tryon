@@ -2,7 +2,7 @@
 
 🏄‍♂️ [Chrome extension](https://ritiksharma.me/virtual-try-on)
 
-[![Virtual Try-On Cover Image](https://github.com/user-attachments/assets/425a55c9-eaa6-4460-b554-3af37c85e865)](https://www.youtube.com/watch?v=OZUYG-LK7Bs)
+[![Virtual Try-On Cover Image](https://github.com/user-attachments/assets/d780fc03-7bcd-48cb-952c-193de8599a89)](https://www.youtube.com/watch?v=OZUYG-LK7Bs)
 
 This chrome extension lets you virtually try on clothes from any e-commerce website using Nano Banana. Simply upload your photo once, and whenever you see a clothing image you like, right-click on it and select 'Virtual Try-On.' The AI generates a realistic image of you wearing that outfit directly on the page. This tool is designed to enhance your online shopping experience by providing a realistic preview of how clothes will look on you before making a purchase.
 
